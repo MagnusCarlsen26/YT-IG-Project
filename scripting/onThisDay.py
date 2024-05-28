@@ -2,8 +2,8 @@ import datetime
 import requests
 import pyperclip  # Library for clipboard interaction
 import time
-from Gemini import AskGemini
-from toMarkdown import to_markdown
+from utility.Gemini import AskGemini
+from utility.toMarkdown import to_markdown
 
 date = datetime.datetime.now().strftime('%m/%d')  # Format as MM/DD
 
