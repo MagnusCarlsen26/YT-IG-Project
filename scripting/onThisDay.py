@@ -25,7 +25,8 @@ def find(index : int) -> int:
         print(event)
         print('Score :',AskGemini(prompt+event+condition)[:-2])
         print('-'*80)
-        if int(AskGemini(prompt+event+condition)[:-2]) >= 8:
+        response = AskGemini(prompt+event+condition)
+        if  len(response) == 3 and int(response[:-2]) >= 8:
             return event,i
         time.sleep(8)
 

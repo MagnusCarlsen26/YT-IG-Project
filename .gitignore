@@ -1,2 +1,7 @@
 .env
 __pycache__/
+
+voiceover/output.mp3
+
+video/video.mp4
+video/random_interval.mp4
