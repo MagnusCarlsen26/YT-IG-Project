@@ -1,7 +1,8 @@
 import json
 import http.client
 
-def generate_speech(api_key = '693df1c8c8f3456f0a9a113ebb579f66', text, voice_id, output_filename):
+def generate_speech(text, voice_id, output_filename = 'voiceover'):
+    api_key = '693df1c8c8f3456f0a9a113ebb579f66'
     conn = http.client.HTTPSConnection("api.elevenlabs.io")
 
     headers = {
