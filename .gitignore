@@ -1,0 +1,15 @@
+.env
+__pycache__/
+
+voiceover/output.mp3
+
+video/video.mp4
+video/random_interval.mp4
+
+audio.mp3
+audio.wav
+output_vid
+
+videoplayback.mp4
+utility/minecraft.mp4
+utility/rocketleague.mp4
