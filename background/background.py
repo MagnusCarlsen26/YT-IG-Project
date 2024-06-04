@@ -2,7 +2,7 @@ import os
 import random
 from pytube import YouTube
 from moviepy.video.io.VideoFileClip import VideoFileClip
-
+from moviepy.editor import VideoFileClip
 from pytube import YouTube
 import random
 
@@ -20,17 +20,13 @@ def download_background(id, download_path='video.mp4'):
 
     stream.download(filename=download_path)
 
-    # Extract a 1-minute random interval (if you still need this)
     random_interval_path = extract_random_interval(download_path) 
     print(f"Random 1-minute interval saved to: {random_interval_path}")
 
-from moviepy.editor import VideoFileClip
-import random
-
-def extract_random_interval(video_path, interval_duration=60, output_path='background.mp4'):
+def extract_random_interval(video_path, interval_duration=90, output_path='video.mp4'):
     clip = VideoFileClip(video_path)
     original_width, original_height = clip.size
-    target_aspect_ratio = 9/16  # IG Reels aspect ratio
+    target_aspect_ratio = 9/16 
 
     if original_width / original_height > target_aspect_ratio:
         new_width = int(original_height * target_aspect_ratio)
@@ -58,6 +54,5 @@ def extract_random_interval(video_path, interval_duration=60, output_path='backg
 
     clip.close()
     random_interval_clip.close()
+    print('Made background Video ...')
     return output_path
-
-# extract_random_interval('video.mp4')

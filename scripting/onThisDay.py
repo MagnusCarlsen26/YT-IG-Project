@@ -4,6 +4,8 @@ import pyperclip
 import time
 from utility.Gemini import AskGemini
 from utility.toMarkdown import to_markdown
+from dotenv import load_dotenv,dotenv_values
+load_dotenv()
 
 def find(index : int,data,prompt,condition) -> int:
     for i in range(index,len(data)):
@@ -13,7 +15,7 @@ def find(index : int,data,prompt,condition) -> int:
         print('Score :',AskGemini(prompt+event+condition)[:-2])
         print('-'*80)
         response = AskGemini(prompt+event+condition)
-        if  len(response) == 3 and int(response[:-2]) >= 7:
+        if  len(response) == 3 and int(response[:-2]) >= 5:
             return event,i
         time.sleep(8)
 
@@ -27,7 +29,7 @@ def scripting() :
     response.raise_for_status()  
     data = response.json()
 
-    prompt = ''' On a scale of 1 to 10 how well known and interesting  the following event be to Americans. '''
+    prompt = ''' On a scale of 1 to 10 how interesting the following event be to Americans. '''
     condition = ''' Just give me integer between 1 to 10 nothing else '''
 
     data = data['selected'] + data['births'] + data['deaths'] + data['events']
@@ -40,9 +42,9 @@ def scripting() :
         events.append(event)
 
     for i in events:
-        print(event)
+        print(i)
         print()
-
+    print('-'*80)
     prompt = '''
     I'm making an instagram reel. My page makes daily reels about 'This day in history'.
     With the following information that happened today in history, I want you to make a script for my reel. In this context, give me 45 secs script for the following event.
@@ -53,5 +55,5 @@ def scripting() :
     '''
 
     script = to_markdown(AskGemini(prompt + ''.join(events)+Format))
+    print(script)
     return script
-

@@ -1,14 +1,16 @@
 import json
 import http.client
+from dotenv import load_dotenv,dotenv_values
+import os
+load_dotenv()
 
-def generate_speech(text, voice_id, output_filename = 'audio'):
-    api_key = '693df1c8c8f3456f0a9a113ebb579f66'
+def elevenlabs(text, voice_id, output_filename = 'audio'):
     conn = http.client.HTTPSConnection("api.elevenlabs.io")
 
     headers = {
         "accept": "audio/mpeg",
         "Content-Type": "application/json",
-        "xi-api-key": api_key
+        "xi-api-key": os.getenv('ELEVEN_LABS_API')
     }
 
     payload = {
@@ -29,6 +31,6 @@ def generate_speech(text, voice_id, output_filename = 'audio'):
             file.write(response.read())
         print("Speech generated successfully!")
     else:
-        print("Error:", response.status)
+        print("Error:", response.text)
 
     conn.close()
