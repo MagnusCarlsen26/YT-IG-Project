@@ -45,3 +45,4 @@ def download_and_edit_shorts(query , num_shorts=10):
 
     print('Shorts are Stiched ...')
 
+download_and_edit_shorts('birds')
