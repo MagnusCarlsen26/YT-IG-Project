@@ -10,7 +10,8 @@ from moviepy.config import change_settings
 import moviepy.editor as mpe
 import os
 
-# script = scripting()
+
+script = scripting()
 # # script = makeNews('Bollywood news')
 # print(len(script.split()))
 # random_60s_crop('video.mp4')
@@ -42,21 +43,22 @@ from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
 def generate_captions(video_path, model_size="base"):
     model = stable_whisper.load_model(model_size)
     result = model.transcribe(
-        video_path, 
+        video_path,
         word_timestamps=True,
-        min_word_dur=0.1  
+        min_word_dur=0.1
     )
 
     captions = []
+    captions = []
     caption_style = {
         'position': 'bottom', 
-        'fontsize': 15,
-        'color': 'white',      # Text color is white for better contrast
+        'fontsize': 35,
+        'color': 'black',      # Text color is white for better contrast
         'font': 'Arial-Bold',
         'margin': 5,
-        'bg_color': None,       # No background for the main text
+        'bg_color': 'white',       # No background for the main text
         'border_width': 5,
-        'border_color': 'black',
+        'border_color': 'white',
     }
 
     for segment in result.segments:
@@ -70,24 +72,24 @@ def generate_captions(video_path, model_size="base"):
             finalText += ' '
             finalText += word
             chars += len(word)
-
-        # Main text clip
+        # Main text clip (white text)
         caption_text = TextClip(
             finalText, 
             fontsize=caption_style['fontsize'], 
             color=caption_style['color'],
             font=caption_style['font'], 
-            method='label'
-        )
+            method='label',
+            bg_color=caption_style['bg_color']
+        ).set_position('center')
 
-        # Border text clip
+        # Background clip (semi-transparent black)
         caption_border = TextClip(
             finalText, 
             fontsize=caption_style['fontsize'], 
             color=caption_style['border_color'],
             font=caption_style['font'], 
             method='label',
-        )
+        ).set_position('center')
 
         # Apply margin to the border text
         caption_border = caption_border.margin(
@@ -95,28 +97,24 @@ def generate_captions(video_path, model_size="base"):
             right=caption_style['border_width'],
             top=caption_style['border_width'],
             bottom=caption_style['border_width']
-        )
+        ).set_position('center')
 
-        # Set the position of both text clips
-        combined_clip = CompositeVideoClip([caption_border, caption_text])
-        combined_clip = combined_clip.set_start(start).set_end(end).set_position('center')
-
-        caption_text = caption_text.set_start(start).set_end(end).set_position('center')
-        caption_border = caption_border.set_start(start).set_end(end).set_position('center')
-
-        # Apply margin based on 'position' to both text clips
+        # Apply margin
         if caption_style['position'] == 'bottom':
-            combined_clip = combined_clip.margin(bottom=caption_style['margin'])
-        else:
-            combined_clip = combined_clip.margin(top=caption_style['margin'])
+            caption_text = caption_text.margin(bottom=caption_style['margin'])
+            caption_border = caption_border.margin(bottom=caption_style['margin'])
+        else:  
+            caption_text = caption_text.margin(top=caption_style['margin'])
+            caption_border = caption_border.margin(top=caption_style['margin'])
+        
+        # Create combined clip with background and text on top
+        caption = CompositeVideoClip([caption_border, caption_text])
+        caption = caption.set_start(start).set_end(end).set_position('center')
 
-        # Combine the border and text clips to form the final caption
-        final_caption = CompositeVideoClip([caption_border, caption_text])
-        captions.append(final_caption)
+        captions.append(caption)
 
     video = VideoFileClip(video_path)
     final_video = CompositeVideoClip([video] + captions)
     final_video.write_videofile("output_with_captions.mp4")
 
-
-generate_captions("Final Video.mp4")
+# generate_captions("Final Video.mp4")
