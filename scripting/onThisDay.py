@@ -45,15 +45,15 @@ def scripting() :
         print(i)
         print()
     print('-'*80)
-    prompt = '''
+    prompt = f'''
     I'm making an instagram reel. My page makes daily reels about 'This day in history'.
     With the following information that happened today in history, I want you to make a script for my reel. In this context, give me 45 secs script for the following event.
-    '''
+    
+    {''.join(events)}
 
-    Format = '''
     Write the script in first person for this particular part and just give me script nothing else. In starting directly start with topic without any introduction. During outro say - "For more history content follow my channel".
     '''
 
-    script = to_markdown(AskGemini(prompt + ''.join(events)+Format))
+    script = to_markdown(AskGemini( prompt ))
     print(script)
     return script

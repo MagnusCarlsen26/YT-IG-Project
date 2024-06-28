@@ -60,13 +60,14 @@ def makeNews(newsType):
     prompt = f''' 
     I have a {newsType} page on instagram where I upload daily {newsType}. I want you to make a script for
     a reel that I will post on my page. In this context, give me 45 secs script for the following event.
-    '''
-    condition = f'''
+
+    {news}
+
     Write the script in first person for this particular part and just give me script nothing else. In starting directly start with topic without any introduction. During outro say - "For more {newsType} content follow my page". Remember just the text that I have to read. 
     '''
 
-    query = prompt + news + condition
-    script = to_markdown(AskGemini(prompt + news + condition ))
+
+    script = to_markdown(AskGemini( prompt ))
 
     print(script)
     
