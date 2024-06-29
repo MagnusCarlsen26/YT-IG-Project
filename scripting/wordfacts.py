@@ -3,8 +3,8 @@ from utility.toMarkdown import to_markdown
 import json
 import random
 
-def motivation() :
-    with open('politifact_factcheck_data    .json', 'r',encoding='utf-8') as file:
+def worldfacts() :
+    with open('assets/json/political_facts.json', 'r',encoding='utf-8') as file:
         data = json.load(file)
     randomIndex = random.randint(0,len(data) - 1)
     quote = data[randomIndex]
@@ -19,6 +19,7 @@ def motivation() :
 
     Write the script in first person for this particular part and just give me script nothing else. In starting directly start with topic without any introduction. During outro say - "For more Political Facts content follow my page". Remember just the text that I have to read. 
 '''  
-    print(to_markdown(AskGemini(prompt)))
-
-motivation()
+    script = to_markdown(AskGemini(prompt))
+    print(script)
+    print('-'*80)
+    return script

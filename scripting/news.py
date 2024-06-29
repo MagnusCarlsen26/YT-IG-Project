@@ -54,9 +54,6 @@ def makeNews(newsType):
         news += f"Title - {i['title']} \n URL - {i['url']} \n\n"
         news_data.append(i['title'])
 
-    print(news)
-    print('-'*80)
-
     prompt = f''' 
     I have a {newsType} page on instagram where I upload daily {newsType}. I want you to make a script for
     a reel that I will post on my page. In this context, give me 45 secs script for the following event.
@@ -66,9 +63,8 @@ def makeNews(newsType):
     Write the script in first person for this particular part and just give me script nothing else. In starting directly start with topic without any introduction. During outro say - "For more {newsType} content follow my page". Remember just the text that I have to read. 
     '''
 
-
     script = to_markdown(AskGemini( prompt ))
 
     print(script)
-    
+    print('-'*80)
     return script

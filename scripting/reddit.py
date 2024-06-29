@@ -7,6 +7,7 @@ import torch
 from transformers import AutoModel, AutoTokenizer
 from praw.models import MoreComments
 import re
+import random
 
 def sanitize_text(text: str) -> str:
     r"""Sanitizes the text for tts.
@@ -158,6 +159,18 @@ def sort_by_similarity(thread_objects, keywords):
     #    print(f'{i}) {threads_sentences[i]} score {similarity_scores[i]}')
 
     return thread_objects, similarity_scores
+def script(threads) :
+    randomThread = random.randint(0,len(threads) - 1)
+    thread = threads[randomThread]  
+
+    for i in range(len(thread['comments'])) :
+
+        if 120 >len(thread['thread_title'].split()) + len(thread['comments'][i]['comment_body'].split()) > 50 :
+            print (thread['thread_title'] + '\n' + '\n' + thread['comments'][i]['comment_body'] + 'For more content follow my channel')
+            print('-'*80)
+            return thread['thread_title'] + '\n' + '\n' + thread['comments'][i]['comment_body']  + 'For more content follow my channel'
+    else :
+        return script(threads)
 
 def get_subreddit_threads(sub):
     """
@@ -191,16 +204,6 @@ def get_subreddit_threads(sub):
 
     threads = subreddit.hot(limit=25)
 
-    # upvotes = submission.score
-    # ratio = submission.upvote_ratio * 100
-    # num_comments = submission.num_comments
-    # threadurl = f"https://new.reddit.com/{submission.permalink}"
-
-    # print(f"Video will be: {submission.title} :thumbsup:")
-    # print(f"Thread url is: {threadurl} :thumbsup:")
-    # print(f"Thread has {upvotes} upvotes")
-    # print(f"Thread has a upvote ratio of {ratio}%")
-    # print(f"Thread has {num_comments} comments")
     all_thread_data = []  # List to store data for all threads
 
     for submission in threads:
@@ -211,8 +214,6 @@ def get_subreddit_threads(sub):
             "is_nsfw": submission.over_18,
             "comments": [],
         }
-
-        print(f"Processing thread: {submission.title}")  # Add this line for clarity
 
         for top_level_comment in submission.comments:
             if isinstance(top_level_comment, MoreComments):
@@ -237,6 +238,5 @@ def get_subreddit_threads(sub):
 
         all_thread_data.append(thread_data)  # Add thread data to the list
     
-    with open('data.json', 'w') as f:
-        json.dump(all_thread_data, f, indent=4) 
     
+    return script(all_thread_data)

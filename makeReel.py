@@ -8,6 +8,7 @@ from moviepy.config import change_settings
 import moviepy.editor as mpe
 from background.background import download_background , random_60s_crop
 from requests_toolbelt.multipart.encoder import MultipartEncoder
+from utility import Gemini,toMarkdown
 
 IMAGEMAGICK_PATH = r'C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe'
 change_settings({'IMAGEMAGICK_BINARY':IMAGEMAGICK_PATH})
@@ -102,7 +103,7 @@ def generate_captions(video_path, model_size="base"):
     final_video = CompositeVideoClip([video] + captions)
     final_video.write_videofile("output_with_captions.mp4")
 
-def postToIg() :
+def postToIg(caption) :
     print('Posting to IG ...')
     response = requests.post('http://localhost:5000/loginNow')
     try :
@@ -116,22 +117,22 @@ def postToIg() :
         m = MultipartEncoder(fields={
             'video': ('Final Video.mp4', open('politicalFacts.mp4', 'rb'), 'video/mp4'),
             'image': ('image.jpg', open('image.jpg', 'rb'), 'image/jpeg'),
-            'caption' : 'Demo Caption',
+            'caption' : caption,
         })
         response = requests.post('http://localhost:5000/publishVideo', data=m, headers={'Content-Type': m.content_type})
         print(response.text)
-        print("Posted on IG.")
+        print("Posted on IG...")
         response = requests.post('http://localhost:5000/publishStoryVideo', data=m, headers={'Content-Type': m.content_type})
         print(response.text)
 
-# from scripting.onThisDay import scripting
-# from scripting.news import makeNews
-# from scripting.motivation.motivation import motivation
-# from scripting.facts.wordfacts import worldfacts
-from scripting.reddit.reddit import get_subreddit_threads
-# from caption.generateCaption import generateCaption
+from scripting.onThisDay import scripting
+from scripting.news import makeNews
+from scripting.motivation import motivation
+from scripting.wordfacts import worldfacts
+from scripting.reddit import get_subreddit_threads
+from caption.generateCaption import generateCaption
 
-get_subreddit_threads('CasualConversation')
+# script = get_subreddit_threads('askscience')
 # script = scripting()
 # script = makeNews('Hollywood news')
 # script = motivation()
@@ -150,4 +151,4 @@ get_subreddit_threads('CasualConversation')
 
 # generate_captions("Final Video.mp4")
 
-# postToIg()
+# postToIg('Askscience')

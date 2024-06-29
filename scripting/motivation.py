@@ -4,12 +4,11 @@ import json
 import random
 
 def motivation() :
-    with open('motivation.json', 'r',encoding='utf-8') as file:
+    with open('assets/json/motivation.json', 'r',encoding='utf-8') as file:
         data = json.load(file)
     randomIndex = random.randint(0,len(data) - 1)
     quote = data[randomIndex]
 
-    print(quote)
     prompt = f'''
     I am running a Motivation channel in instagram.
     
@@ -19,6 +18,8 @@ def motivation() :
 
     Write the script in first person for this particular part and just give me script nothing else. In starting directly start with topic without any introduction. During outro say - "For more motivaional content follow my page". Remember just the text that I have to read. 
 '''  
-    print(to_markdown(AskGemini(prompt)))
+    script = to_markdown(AskGemini(prompt))
 
-motivation()
+    print(script)
+    print('-'*80)
+    return script
