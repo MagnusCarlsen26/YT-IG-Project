@@ -168,7 +168,7 @@ def script(threads) :
         if 120 >len(thread['thread_title'].split()) + len(thread['comments'][i]['comment_body'].split()) > 50 :
             print (thread['thread_title'] + '\n' + '\n' + thread['comments'][i]['comment_body'] + 'For more content follow my channel')
             print('-'*80)
-            return thread['thread_title'] + '\n' + '\n' + thread['comments'][i]['comment_body']  + 'For more content follow my channel'
+            return { 'title' : thread['thread_title'] , 'comment' : thread['comments'][i]['comment_body'] }
     else :
         return script(threads)
 
