@@ -3,3 +3,5 @@ __pycache__/
 
 assets/bg/
 assets/music/
+
+server/node_modules
