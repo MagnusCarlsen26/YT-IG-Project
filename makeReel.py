@@ -49,7 +49,7 @@ from caption.redditCaption import generateCaption
 igAccounts = {
     'askfeminists' : 'AskFeminists',
     'askwomen' : 'AskWomen',
-    # 'askmen' : 'AskMen' 
+    'askmen' : 'AskMen' 
 }
 
 bg = [
@@ -60,10 +60,10 @@ bg = [
 ]
 
 thumbnailImgs = [
-    'assets/thumbnails/csgo.mp4',
-    'assets/thumbnails/gta.mp4',
-    'assets/thumbnails/minecraft.mp4',
-    'assets/thumbnails/minecraft2.mp4'
+    r'assets/thumbnails/csgo.jpg',
+    r'assets/thumbnails/gta.jpg',
+    r'assets/thumbnails/minecraft.jpg',
+    r'assets/thumbnails/minecraft2.jpg'
 ]
 
 music = [
@@ -79,7 +79,7 @@ for igAccount in igAccounts :
     subreddit = igAccounts[igAccount]
     content = get_subreddit_threads(subreddit)
     caption = generateCaption(content['title'],subreddit)
-    script = content['title'] + '\n' + '\n' + + '.' + content['comment'] + '. Follow for more. Thankyou.'
+    script = content['title'] +  '.' + '\n' + '\n' + content['comment'] + '. Follow for more. Thankyou.'
 
     print(f"Number of words = {len(script.split())} ")
 
@@ -97,6 +97,12 @@ for igAccount in igAccounts :
     randomMusic = random.randint(0,len(music) -1)
     addBgMusic("output_with_captions.mp4",music[randomMusic] )
 
-    thumbnail('image.jpg', text=content['title'] , font_size=32)
+    thumbnail(thumbnailImgs[randomBg], text=content['title'] , font_size=32)
 
-    postToIg(igAccount,caption,f"{igAccount}.mp4",'thumbnail_with_text_image.jpg')
+    postToIg(igAccount,caption,"final_video_with_music.mp4",'thumbnail.jpg')
+    os.remove("audio.mp3")
+    os.remove("audio.wav")
+    os.remove("output.mp4")
+    os.remove("output_with_captions.mp4")
+    os.remove("Final Video.mp4")
+    os.remove("thumbnail.jpg")

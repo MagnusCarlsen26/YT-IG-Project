@@ -40,6 +40,7 @@ def thumbnail(image_path, text, font_size=24, text_color=(0, 0, 0), background_c
             draw.rectangle((x - margin, y - margin, x + text_width + margin, y + text_height + margin), fill=background_color)
 
             draw.text((x, y), text, text_color, font=font)
-            img_with_text.save("thumbnail_with_text_" + image_path)
-    except IOError:
+            img_with_text.save("thumbnail.jpg")
+    except Exception as e:
         print(f"Cannot create thumbnail for {image_path}")
+        print(e)
