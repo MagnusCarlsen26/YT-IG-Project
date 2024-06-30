@@ -1,154 +1,102 @@
 import os
 import requests
-import stable_whisper
+import random
+from dotenv import load_dotenv
+from utility import Gemini,toMarkdown
 from voiceover.elevenLabs import elevenlabs
 from voiceover.aws_polly import aws_polly
-from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
 from moviepy.config import change_settings
-import moviepy.editor as mpe
 from background.background import download_background , random_60s_crop
 from requests_toolbelt.multipart.encoder import MultipartEncoder
-from utility import Gemini,toMarkdown
+from video.addBgMusic import addBgMusic
+from video.combineAudioVideo import combineAudioVideo
+from video.subtitle import subtitle
+from video.thumbnail import thumbnail
+
+load_dotenv()
 
 IMAGEMAGICK_PATH = r'C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe'
 change_settings({'IMAGEMAGICK_BINARY':IMAGEMAGICK_PATH})
 
-def combine_video_and_audio(video_path, audio_path):
-
-    video = mpe.VideoFileClip(video_path)
-    audio = mpe.AudioFileClip(audio_path)
-
-    shorter_duration = min(video.duration, audio.duration)
-    video = video.subclip(0, shorter_duration) 
-    audio = audio.subclip(0, shorter_duration) 
-
-    final_video = video.set_audio(audio)
-
-    final_video.write_videofile("Final Video.mp4", codec="libx264", audio_codec="aac")
-
-def generate_captions(video_path, model_size="base"):
-    model = stable_whisper.load_model(model_size)
-    result = model.transcribe(
-        video_path,
-        word_timestamps=True,
-        min_word_dur=0.1
-    )
-
-    captions = []
-    captions = []
-    caption_style = {
-        'position': 'bottom', 
-        'fontsize': 35,
-        'color': 'black',      # Text color is white for better contrast
-        'font': 'Arial-Bold',
-        'margin': 5,
-        'bg_color': 'white',       # No background for the main text
-        'border_width': 5,
-        'border_color': 'white',
-    }
-
-    for segment in result.segments:
-        start, end, text = segment.start, segment.end, segment.text
-        finalText = ''
-        chars = 0
-        for word in text.split():
-            if chars + len(word) > 25:
-                finalText += '\n'
-                chars = 0
-            finalText += ' '
-            finalText += word
-            chars += len(word)
-        # Main text clip (white text)
-        caption_text = TextClip(
-            finalText, 
-            fontsize=caption_style['fontsize'], 
-            color=caption_style['color'],
-            font=caption_style['font'], 
-            method='label',
-            bg_color=caption_style['bg_color']
-        ).set_position('center')
-
-        # Background clip (semi-transparent black)
-        caption_border = TextClip(
-            finalText, 
-            fontsize=caption_style['fontsize'], 
-            color=caption_style['border_color'],
-            font=caption_style['font'], 
-            method='label',
-        ).set_position('center')
-
-        # Apply margin to the border text
-        caption_border = caption_border.margin(
-            left=caption_style['border_width'],
-            right=caption_style['border_width'],
-            top=caption_style['border_width'],
-            bottom=caption_style['border_width']
-        ).set_position('center')
-
-        # Apply margin
-        if caption_style['position'] == 'bottom':
-            caption_text = caption_text.margin(bottom=caption_style['margin'])
-            caption_border = caption_border.margin(bottom=caption_style['margin'])
-        else:  
-            caption_text = caption_text.margin(top=caption_style['margin'])
-            caption_border = caption_border.margin(top=caption_style['margin'])
-        
-        # Create combined clip with background and text on top
-        caption = CompositeVideoClip([caption_border, caption_text])
-        caption = caption.set_start(start).set_end(end).set_position('center')
-
-        captions.append(caption)
-
-    video = VideoFileClip(video_path)
-    final_video = CompositeVideoClip([video] + captions)
-    final_video.write_videofile("output_with_captions.mp4")
-
-def postToIg(caption) :
+def postToIg(username,caption,videoPath,imagePath) :
     print('Posting to IG ...')
-    response = requests.post('http://localhost:5000/loginNow')
-    try :
-        print(response.text)
-        print(response.text.success)
-    except :
-        pass
+    response = requests.post('http://localhost:5000/loginNow',json = {            'username' : "reddit."+username,
+            'password' : os.getenv("reddit."+username)})
 
-    if response.status_code == 200 :
+    data = response.json()
+    print(data)
+    if response.status_code == 200 and data['success']:
         print("Logged into IG ...")
         m = MultipartEncoder(fields={
-            'video': ('Final Video.mp4', open('politicalFacts.mp4', 'rb'), 'video/mp4'),
-            'image': ('image.jpg', open('image.jpg', 'rb'), 'image/jpeg'),
+            'video': ('Final Video.mp4', open(videoPath, 'rb'), 'video/mp4'),
+            'image': ('image.jpg', open(imagePath, 'rb'), 'image/jpeg'),
             'caption' : caption,
         })
         response = requests.post('http://localhost:5000/publishVideo', data=m, headers={'Content-Type': m.content_type})
         print(response.text)
         print("Posted on IG...")
-        response = requests.post('http://localhost:5000/publishStoryVideo', data=m, headers={'Content-Type': m.content_type})
-        print(response.text)
+        # response = requests.post('http://localhost:5000/publishStoryVideo', data=m, headers={'Content-Type': m.content_type})
+        # print(response.text)
+
 
 from scripting.onThisDay import scripting
 from scripting.news import makeNews
 from scripting.motivation import motivation
 from scripting.wordfacts import worldfacts
 from scripting.reddit import get_subreddit_threads
-from caption.generateCaption import generateCaption
+from caption.redditCaption import generateCaption
 
-# script = get_subreddit_threads('askscience')
-# script = scripting()
-# script = makeNews('Hollywood news')
-# script = motivation()
-# script = worldfacts()
-# caption = generateCaption(script)
+igAccounts = {
+    'askfeminists' : 'AskFeminists',
+    'askwomen' : 'AskWomen',
+    # 'askmen' : 'AskMen' 
+}
 
-# print(f"Number of words = {len(script.split())} ")
+bg = [
+    'assets/bg/csgo.mp4',
+    'assets/bg/gta.mp4',
+    'assets/bg/minecraft.mp4',
+    'assets/bg/minecraft2.mp4'
+]
 
-# aws_polly(script)
+thumbnailImgs = [
+    'assets/thumbnails/csgo.mp4',
+    'assets/thumbnails/gta.mp4',
+    'assets/thumbnails/minecraft.mp4',
+    'assets/thumbnails/minecraft2.mp4'
+]
 
-# random_60s_crop('video.mp4')
+music = [
+    'assets/music/1.mp3',
+    'assets/music/2.mp3',
+    'assets/music/3.mp3',
+    'assets/music/4.mp3',
+    'assets/music/5.mp3',
+]
 
-# os.system("ffmpeg -i audio.mp3 audio.wav") 
+for igAccount in igAccounts :
+    
+    subreddit = igAccounts[igAccount]
+    content = get_subreddit_threads(subreddit)
+    caption = generateCaption(content['title'],subreddit)
+    script = content['title'] + '\n' + '\n' + + '.' + content['comment'] + '. Follow for more. Thankyou.'
 
-# combine_video_and_audio("output.mp4", "audio.wav")
+    print(f"Number of words = {len(script.split())} ")
 
-# generate_captions("Final Video.mp4")
+    randomBg = random.randint(0,len(bg)-1)
+    random_60s_crop(bg[randomBg])
 
-# postToIg('Askscience')
+    aws_polly(script)
+
+    os.system("ffmpeg -i audio.mp3 audio.wav") 
+
+    combineAudioVideo("output.mp4", "audio.wav")
+
+    subtitle("Final Video.mp4")
+
+    randomMusic = random.randint(0,len(music) -1)
+    addBgMusic("output_with_captions.mp4",music[randomMusic] )
+
+    thumbnail('image.jpg', text=content['title'] , font_size=32)
+
+    postToIg(igAccount,caption,f"{igAccount}.mp4",'thumbnail_with_text_image.jpg')
