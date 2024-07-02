@@ -1,6 +1,7 @@
 import os
 import requests
 import random
+import json
 from dotenv import load_dotenv
 from utility import Gemini,toMarkdown
 from voiceover.elevenLabs import elevenlabs
@@ -38,7 +39,6 @@ def postToIg(username,caption,videoPath,imagePath) :
         # response = requests.post('http://localhost:5000/publishStoryVideo', data=m, headers={'Content-Type': m.content_type})
         # print(response.text)
 
-
 from scripting.onThisDay import scripting
 from scripting.news import makeNews
 from scripting.motivation import motivation
@@ -46,33 +46,12 @@ from scripting.wordfacts import worldfacts
 from scripting.reddit import get_subreddit_threads
 from caption.redditCaption import generateCaption
 
-igAccounts = {
-    'askfeminists' : 'AskFeminists',
-    'askwomen' : 'AskWomen',
-    'askmen' : 'AskMen' 
-}
-
-bg = [
-    'assets/bg/csgo.mp4',
-    'assets/bg/gta.mp4',
-    'assets/bg/minecraft.mp4',
-    'assets/bg/minecraft2.mp4'
-]
-
-thumbnailImgs = [
-    r'assets/thumbnails/csgo.jpg',
-    r'assets/thumbnails/gta.jpg',
-    r'assets/thumbnails/minecraft.jpg',
-    r'assets/thumbnails/minecraft2.jpg'
-]
-
-music = [
-    'assets/music/1.mp3',
-    'assets/music/2.mp3',
-    'assets/music/3.mp3',
-    'assets/music/4.mp3',
-    'assets/music/5.mp3',
-]
+with open("config.json","r") as file :
+    file = json.load(file)
+    igAccounts = file["igAccounts"]
+    bg = file["bg"]
+    thumbnailImgs = file["thumbnailImgs"]
+    music = file["music"]
 
 for igAccount in igAccounts :
     

@@ -1,0 +1,29 @@
+{
+    "igAccounts" : {
+        "askfeminists" : "AskFeminists",
+        "askwomen" : "AskWomen",
+        "askmen" : "AskMen" 
+    },
+    
+    "bg" : [
+        "assets/bg/csgo.mp4",
+        "assets/bg/gta.mp4",
+        "assets/bg/minecraft.mp4",
+        "assets/bg/minecraft2.mp4"
+    ],
+    
+    "thumbnailImgs" : [
+        "assets/thumbnails/csgo.jpg",
+        "assets/thumbnails/gta.jpg",
+        "assets/thumbnails/minecraft.jpg",
+        "assets/thumbnails/minecraft2.jpg"
+    ],
+    
+    "music" : [
+        "assets/music/1.mp3",
+        "assets/music/2.mp3",
+        "assets/music/3.mp3",
+        "assets/music/4.mp3",
+        "assets/music/5.mp3"
+    ]
+}

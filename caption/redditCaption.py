@@ -7,6 +7,6 @@ def generateCaption(title,channelName) :
     return f'''
 {title}
 #reddit #redditposts #reels #fyp #redditreadings
-Like and follow @{channelName} for more !
+Like and follow @reddit.{channelName} for more !
 
 '''

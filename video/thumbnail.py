@@ -2,6 +2,16 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 def thumbnail(image_path, text, font_size=24, text_color=(0, 0, 0), background_color=(255, 255, 255), margin=10, border_width=5):
     try:
+        finalText = ''
+        chars = 0
+        for word in text.split():
+            if chars + len(word) > 25:
+                finalText += '\n'
+                chars = 0
+            finalText += ' '
+            finalText += word
+            chars += len(word)
+        text = finalText
         with Image.open(image_path) as img:
             target_width = 9
             target_height = 16
